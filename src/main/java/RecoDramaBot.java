@@ -1,5 +1,6 @@
 import java.io.File;
 import java.net.URI;
+import java.sql.*;
 import java.util.concurrent.CompletableFuture;
 
 import com.vdurmont.emoji.EmojiParser;
@@ -33,10 +34,12 @@ public class RecoDramaBot extends TelegramLongPollingBot {
     public static String countryChosen;
     public static String yearChosen;
     public static String genreChosen;
-    public static String dramaSelectedTitle;
+    public static String dramaChosenTitle;
     public List<String> options;
-    private static final String korea = EmojiParser.parseToUnicode("South Korea :kr:");
-    private static final String china = EmojiParser.parseToUnicode("China :cn:");
+    private static final String korea = "South Korea";
+    private static final String china = "China";
+    //private static final String korea = EmojiParser.parseToUnicode("South Korea :kr:");
+    //private static final String china = EmojiParser.parseToUnicode("China :cn:");
 
 
     public static void main(String[] args) {
@@ -77,7 +80,11 @@ public class RecoDramaBot extends TelegramLongPollingBot {
 
             } else if (input.equals("Fantasy") || input.equals("Historical")
                     || input.equals("Mystery") || input.equals("Romance") || input.equals("Youth")) {
-                processGenre(input, chatId);
+                try {
+                    processGenre(input, chatId);
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
                 SendPhoto dramaPoster = new SendPhoto();
                 dramaPoster.setChatId(chatId.toString());
                 dramaPoster.setPhoto(getPhoto("https://images.unsplash.com/photo-1590272456521-1bbe160a18ce?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MTF8fHxlbnwwfHx8&w=1000&q=80"));
@@ -196,13 +203,25 @@ public class RecoDramaBot extends TelegramLongPollingBot {
         }
     }
 
-    public void processGenre(String input, Long chatId) {
+    public void processGenre(String input, Long chatId) throws SQLException {
         genreChosen = input;
-        Database db = new Database();
 
         SendMessage request = new SendMessage();
         request.setChatId(chatId.toString());
-        options = db.getDramaTitle(countryChosen, yearChosen, genreChosen);
+
+        String url = "jdbc:mysql://127.0.0.1:3306/dramadb";
+        String username = "root";
+        String password = "IL2pBB&D";
+        Connection connection = DriverManager.getConnection(url, username, password);
+        Statement statement = connection.createStatement();
+        String sql = "SELECT * FROM drama WHERE country = " + "\"" + countryChosen + "\"" + " and genre = " + "\"" + genreChosen + "\"" + " and year = "+ "\"" +
+                yearChosen + "\"";
+        ResultSet rs = statement.executeQuery(sql);
+        options = new ArrayList<>();
+        while (rs.next()) {
+            options.add(rs.getString("title"));
+        }
+
         if (options.isEmpty()) {
             request.setText("No drama found. Please try again");
             request.setParseMode(ParseMode.MARKDOWN);
@@ -230,43 +249,53 @@ public class RecoDramaBot extends TelegramLongPollingBot {
     public void processCallBackQuery(String data, Long chatId) {
         SendMessage message = new SendMessage();
         message.setChatId(chatId.toString());
-        Database db = new Database();
-        Drama selectedDrama = db.getDrama(dramaSelectedTitle);
-        if (data.equals("see_synopsis")) {
-            message.setText(selectedDrama.getSynopsis());
-        } else if (data.equals("see_cast")) {
-            message.setText(selectedDrama.getCast());
-        } else if (data.equals("see_numEps")) {
-            message.setText(Integer.toString(selectedDrama.getEps()));
-        } else if (data.equals("see_year")) {
-            message.setText(selectedDrama.getYear());
-        } else if (data.equals("see_genre")) {
-            message.setText(selectedDrama.getGenre().toString());
-        } else { //back
-            message.setText("These are the generated dramas.");
-            message.setParseMode(ParseMode.MARKDOWN);
-
-            ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-            replyKeyboardMarkup.setResizeKeyboard(true);
-            List<KeyboardRow> keyboardRowList = new ArrayList<KeyboardRow>();
-
-            replyKeyboardMarkup = createOptions(replyKeyboardMarkup,
-                    keyboardRowList, options);
-            //added the line after this -> purpose: remove the keyboard after pressing the button
-            replyKeyboardMarkup.setOneTimeKeyboard(true);
-            message.setReplyMarkup(replyKeyboardMarkup);
-
-        }
-        message.setParseMode(ParseMode.MARKDOWN);
         try {
-            execute(message);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
+            String url = "jdbc:mysql://127.0.0.1:3306/dramadb";
+            String username = "root";
+            String password = "IL2pBB&D";
+            Connection connection = DriverManager.getConnection(url, username, password);
+            Statement statement = connection.createStatement();
+            String sql = "select * from drama where title = " + "\"" + dramaChosenTitle + "\"";
+            ResultSet rs = statement.executeQuery(sql);
+            rs.next();
+            if (data.equals("see_synopsis")) {
+                message.setText(rs.getString("synopsis"));
+            } else if (data.equals("see_cast")) {
+                message.setText(rs.getString("cast"));
+            } else if (data.equals("see_numEps")) {
+                message.setText(Integer.toString(rs.getInt("episodes")));
+            } else if (data.equals("see_year")) {
+                message.setText(rs.getString("year"));
+            } else if (data.equals("see_genre")) {
+                message.setText(rs.getString("genre"));
+            } else { //back
+                message.setText("These are the generated dramas.");
+                message.setParseMode(ParseMode.MARKDOWN);
+
+                ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+                replyKeyboardMarkup.setResizeKeyboard(true);
+                List<KeyboardRow> keyboardRowList = new ArrayList<KeyboardRow>();
+
+                replyKeyboardMarkup = createOptions(replyKeyboardMarkup,
+                        keyboardRowList, options);
+                //added the line after this -> purpose: remove the keyboard after pressing the button
+                replyKeyboardMarkup.setOneTimeKeyboard(true);
+                message.setReplyMarkup(replyKeyboardMarkup);
+
+            }
+            message.setParseMode(ParseMode.MARKDOWN);
+            try {
+                execute(message);
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
+        } catch (SQLException err) {
+            err.printStackTrace();
         }
     }
 
     public void processRequest(String update, Long chatId) {
-        dramaSelectedTitle = update;
+        dramaChosenTitle = update;
         SendMessage request = new SendMessage();
         request.setChatId(chatId.toString());
         request.setText(update);
