@@ -25,7 +25,7 @@
     <show-object-properties value="true" />
     <loaded-nodes>
       <connection connection-id="dd348d1d-0409-471f-bc53-750c1e358399">
-        <schema name="dramadb" object-types="index, table, constraint, view, column, dataset trigger, function, procedure" />
+        <schema name="dramadb" object-types="table, index, dataset trigger, constraint, view, column" />
       </connection>
     </loaded-nodes>
   </component>

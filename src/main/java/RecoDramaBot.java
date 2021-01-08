@@ -1,5 +1,8 @@
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.sql.*;
 import java.util.concurrent.CompletableFuture;
 
@@ -73,7 +76,7 @@ public class RecoDramaBot extends TelegramLongPollingBot {
             } else if (input.equals(korea) || input.equals(china)) {
                 processCountry(input, chatId);
 
-            } else if (input.equals("2019") || input.equals("2020")) {
+            } else if (input.equals("2019") || input.equals("2020") || input.equals("2017") || input.equals("2018")) {
                 processYear(input, chatId);
 
                 //returns list of dramas
@@ -85,14 +88,44 @@ public class RecoDramaBot extends TelegramLongPollingBot {
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
                 }
+                /*
                 SendPhoto dramaPoster = new SendPhoto();
                 dramaPoster.setChatId(chatId.toString());
-                dramaPoster.setPhoto(getPhoto("https://images.unsplash.com/photo-1590272456521-1bbe160a18ce?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MTF8fHxlbnwwfHx8&w=1000&q=80"));
+                //dramaPoster.setPhoto("https://images.unsplash.com/photo-1590272456521-1bbe160a18ce?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MTF8fHxlbnwwfHx8&w=1000&q=80");
+                //dramaPoster.setPhoto(getPhoto("https://images.unsplash.com/photo-1590272456521-1bbe160a18ce?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MTF8fHxlbnwwfHx8&w=1000&q=80"));
                 try {
                     execute(dramaPoster);
                 } catch (TelegramApiException e) {
                     e.printStackTrace();
                 }
+
+                URL url = null;
+                try {
+                    url = new URL("https://www.kindpng.com/picc/m/276-2764257_instagram-icon-instagram-logo-small-size-hd-png.png");
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+
+                URI uri = null;
+                try {
+                    uri = url.toURI();
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                }
+                File file = new File(uri.toString());
+                SendPhoto dramaPoster = new SendPhoto();
+                InputFile photo = new InputFile(file);
+                dramaPoster.setPhoto(photo);
+                dramaPoster.setChatId(chatId.toString());
+                try {
+                    execute(dramaPoster);
+                    System.out.println("printed");
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                    System.out.println("end");
+                }
+
+                 */
 
             } else {
                 processRequest(input, chatId);
@@ -161,6 +194,8 @@ public class RecoDramaBot extends TelegramLongPollingBot {
         replyKeyboardMarkup.setResizeKeyboard(true);
         List<KeyboardRow> keyboardRowList = new ArrayList<KeyboardRow>();
         List<String> options = new ArrayList<String>();
+        options.add("2017");
+        options.add("2018");
         options.add("2019");
         options.add("2020");
         replyKeyboardMarkup = createOptions(replyKeyboardMarkup,
@@ -235,8 +270,7 @@ public class RecoDramaBot extends TelegramLongPollingBot {
 
             replyKeyboardMarkup = createOptions(replyKeyboardMarkup,
                     keyboardRowList, options);
-            //added the line after this -> purpose: remove the keyboard after pressing the button
-            replyKeyboardMarkup.setOneTimeKeyboard(true);
+            //replyKeyboardMarkup.setOneTimeKeyboard(true);
             request.setReplyMarkup(replyKeyboardMarkup);
         }
         try {
@@ -356,6 +390,7 @@ public class RecoDramaBot extends TelegramLongPollingBot {
         }
     }
 
+    /*
     public InputFile getPhoto(String url) {
         // Create a URI from url
         URI uri = create(url);
@@ -363,4 +398,6 @@ public class RecoDramaBot extends TelegramLongPollingBot {
         InputFile photo = new InputFile(file);
         return photo;
     }
+
+     */
 }
