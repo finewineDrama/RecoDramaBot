@@ -1,11 +1,16 @@
+import java.io.File;
+import java.net.URI;
 import java.util.concurrent.CompletableFuture;
+
 import com.vdurmont.emoji.EmojiParser;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -15,9 +20,12 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+
+import static java.net.URI.*;
 
 
 public class RecoDramaBot extends TelegramLongPollingBot {
@@ -26,6 +34,7 @@ public class RecoDramaBot extends TelegramLongPollingBot {
     public static String yearChosen;
     public static String genreChosen;
     public static String dramaSelectedTitle;
+    public List<String> options;
     private static final String korea = EmojiParser.parseToUnicode("South Korea :kr:");
     private static final String china = EmojiParser.parseToUnicode("China :cn:");
 
@@ -69,6 +78,15 @@ public class RecoDramaBot extends TelegramLongPollingBot {
             } else if (input.equals("Fantasy") || input.equals("Historical")
                     || input.equals("Mystery") || input.equals("Romance") || input.equals("Youth")) {
                 processGenre(input, chatId);
+                SendPhoto dramaPoster = new SendPhoto();
+                dramaPoster.setChatId(chatId.toString());
+                dramaPoster.setPhoto(getPhoto("https://images.unsplash.com/photo-1590272456521-1bbe160a18ce?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MTF8fHxlbnwwfHx8&w=1000&q=80"));
+                try {
+                    execute(dramaPoster);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+
             } else {
                 processRequest(input, chatId);
             }
@@ -184,7 +202,7 @@ public class RecoDramaBot extends TelegramLongPollingBot {
 
         SendMessage request = new SendMessage();
         request.setChatId(chatId.toString());
-        List<String> options = db.getDramaTitle(countryChosen, yearChosen, genreChosen);
+        options = db.getDramaTitle(countryChosen, yearChosen, genreChosen);
         if (options.isEmpty()) {
             request.setText("No drama found. Please try again");
             request.setParseMode(ParseMode.MARKDOWN);
@@ -222,12 +240,24 @@ public class RecoDramaBot extends TelegramLongPollingBot {
             message.setText(Integer.toString(selectedDrama.getEps()));
         } else if (data.equals("see_year")) {
             message.setText(selectedDrama.getYear());
-        } else { //genre
+        } else if (data.equals("see_genre")) {
             message.setText(selectedDrama.getGenre().toString());
+        } else { //back
+            message.setText("These are the generated dramas.");
+            message.setParseMode(ParseMode.MARKDOWN);
+
+            ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+            replyKeyboardMarkup.setResizeKeyboard(true);
+            List<KeyboardRow> keyboardRowList = new ArrayList<KeyboardRow>();
+
+            replyKeyboardMarkup = createOptions(replyKeyboardMarkup,
+                    keyboardRowList, options);
+            //added the line after this -> purpose: remove the keyboard after pressing the button
+            replyKeyboardMarkup.setOneTimeKeyboard(true);
+            message.setReplyMarkup(replyKeyboardMarkup);
+
         }
-
         message.setParseMode(ParseMode.MARKDOWN);
-
         try {
             execute(message);
         } catch (TelegramApiException e) {
@@ -253,29 +283,35 @@ public class RecoDramaBot extends TelegramLongPollingBot {
         synopsis.setCallbackData("see_synopsis");
         rowInline1.add(synopsis);
 
+        //numOfEps
+        InlineKeyboardButton numEps = new InlineKeyboardButton();
+        numEps.setText("Num of Eps");
+        numEps.setCallbackData("see_numEps");
+        rowInline1.add(numEps);
+
         //cast
         InlineKeyboardButton cast = new InlineKeyboardButton();
         cast.setText("Cast");
         cast.setCallbackData("see_cast");
-        rowInline1.add(cast);
-
-        //numOfEps
-        InlineKeyboardButton numEps = new InlineKeyboardButton();
-        numEps.setText("Number of Episodes");
-        numEps.setCallbackData("see_numEps");
-        rowInline2.add(numEps);
+        rowInline2.add(cast);
 
         //year
         InlineKeyboardButton year = new InlineKeyboardButton();
         year.setText("Year");
         year.setCallbackData("see_year");
-        rowInline1.add(year);
+        rowInline2.add(year);
 
         //genre
         InlineKeyboardButton genre = new InlineKeyboardButton();
         genre.setText("Genre");
         genre.setCallbackData("see_genre");
         rowInline2.add(genre);
+
+        //back
+        InlineKeyboardButton back = new InlineKeyboardButton();
+        back.setText("Back");
+        back.setCallbackData("see_previous");
+        rowInline2.add(back);
 
         // Set the keyboard to the markup
         rowsInline.add(rowInline1);
@@ -289,5 +325,13 @@ public class RecoDramaBot extends TelegramLongPollingBot {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
+    }
+
+    public InputFile getPhoto(String url) {
+        // Create a URI from url
+        URI uri = create(url);
+        File file = new File(uri);
+        InputFile photo = new InputFile(file);
+        return photo;
     }
 }
