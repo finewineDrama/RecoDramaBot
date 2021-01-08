@@ -19,15 +19,30 @@ public class Database {
         hr_genres.add("Historical");
         hr_genres.add("Romance");
 
+        ArrayList<String> mr_genres = new ArrayList<String>();
+        mr_genres.add("Mystery");
+        mr_genres.add("Romance");
+
         ArrayList<String> m_genres = new ArrayList<String>();
         m_genres.add("Mystery");
 
         ArrayList<String> r_genres = new ArrayList<String>();
         r_genres.add("Romance");
 
+        ArrayList<String> h_genres = new ArrayList<String>();
+        h_genres.add("Historical");
+
+        ArrayList<String> y_genres = new ArrayList<String>();
+        y_genres.add("Youth");
+
         ArrayList<String> yr_genres = new ArrayList<String>();
         yr_genres.add("Youth");
         yr_genres.add("Romance");
+
+        ArrayList<String> hfm_genres = new ArrayList<String>();
+        hfm_genres.add("Historical");
+        hfm_genres.add("Fantasy");
+        hfm_genres.add("Mystery");
 
 
         //synopsis
@@ -65,6 +80,39 @@ public class Database {
         allDrama.add(cloy);
         allDrama.add(extra);
         allDrama.add(record);
+
+        //cdrama synopsis
+        String untamed_synopsis = "Wei Wu Xian and Lan Wang Ji, two talented disciples of respectable clans, meet during a cultivation training and accidentally discover a secret carefully hidden for many years. Taking on the legacy of their ancestors, they decide to rid the world of the ominous threat, but in a dramatic turn of events, Wei Wu Xian dies. Sixteen years later, Wei Wu Xian is brought back to life through a self-sacrificing ritual. He conceals himself behind a mask and assumes the identity of his summoner. Soon Wei Wu Xian reunites with Lan Wang Ji, and the pair starts working together to solve the mysteries of the present and unravel the truth behind the events of the past.";
+        String legend_synopsis = "In the Five Dynasties and Ten Kingdoms era, young Lu Ping escapes the wicked forces of Shanhai Tower and discovers his spiritual identity in a moment of enlightenment – or rather, his spiritual identities, as he becomes aware of six distinct souls revolving through his being. When Lu later begins to train and grow under his teacher’s masterful guidance, he meets eternal brethren and earns the affection of the young miss Qin along the way. All is going well until a vision reveals his relationship to an unresolved crime in the martial arts world of a decade earlier.";
+        String detective_synopsis = "Set in the Republican Era in Shanghai in the 1930s: An intriguing crime case emerges amidst the bustling city. A beautiful new graduate of the police academy, Qin Xiao Man, joins the investigation unit. The famous detective Luo Fei becomes her colleague and neighbour. Together they solve case after case with a growing conspiracy appearing.";
+        String roommate_synopsis = "Set in the mid-1920s. A resourceful young police officer named Qiao Chu Sheng and a genius, Lu Yao and a reporter, Bai You Ning form a small detective squad that specializes in solving strange and unsettling murder mysteries.";
+        String squid_synopsis = "A cute romance between an adorable singer who develops a crush on a guy that she is too scared to approach. He is a genius in the field of computer engineering and a legend in the world of professional gaming.";
+        String tiger_synopsis = "Chen Xiaoqian, a scriptwriter accidentally entered her own script where she became the third princess of Xuanhu City, a minor supporting character who would be killed anytime. Thus begins her journey of survival, where she meets two guys - an unpredictable rich young master named Han Shuo and a perfect guy who is the Minister of Education named Pei Heng.";
+        String head_synopsis = "Situ Mo is a graduating student. As someone who got used to having her whole life planned out for her, she is at a loss about her future and can't find the courage to make a decision for herself. Because the school districts have merged, physics major Gu Weiyi barges into her life. They clash repeatedly without noticing that they are slowly walking into each other's hearts. To their surprise, they accidentally end up having to live together.";
+        String go_synopsis = "The story revolves around three troubled youths who find solace in their common experiences to become the best family that they can be for each other. Growing up in dysfunctional households, three individuals who are unrelated by blood treat each other like family as they yearn for the love that they cannot find at home. Eldest brother Ling Xiao, second brother He Zi Qiu, and youngest sister Li Jian Jian grow up together, experiencing life’s joy and strife as they support each other’s chosen paths.";
+
+        //cdrama object
+        Drama untamed = new Drama("The Untamed", EmojiParser.parseToUnicode("China :cn:"), "Sean Xiao, Wang Yi Bo", 50, untamed_synopsis, hfm_genres, "2019");
+        Drama legend = new Drama("Legend of Awakening", EmojiParser.parseToUnicode("China :cn:"), "Arthur Chen, Cheng Xiao, Dylan Xiong, Ancy Deng, Jerry Yu, Shang Xuan", 48, legend_synopsis, h_genres, "2020");
+        Drama detective = new Drama("Detective L", EmojiParser.parseToUnicode("China :cn:"), "Johnny Bai, Una You", 24, detective_synopsis,  m_genres, "2019");
+        Drama roommate = new Drama("My Roommate is a Detective", EmojiParser.parseToUnicode("China :cn:"), "Hu Yi Tian, Zhang Yun Long, Xiao Yan", 36, roommate_synopsis, mr_genres, "2020");
+        Drama squid = new Drama("Go Go Squid!", EmojiParser.parseToUnicode("China :cn:"), "Yang Zi, Li Xian", 41, squid_synopsis, yr_genres, "2019");
+        Drama tiger = new Drama("The Romance of Tiger and Rose",EmojiParser.parseToUnicode("China :cn:"), "Rosy Zhao, Ryan Ding", 24,  tiger_synopsis, hr_genres,"2020");
+        Drama head = new Drama("Put Your Head on My Shoulder", EmojiParser.parseToUnicode("China :cn:"), "Xing Fei, Ling Yi, Tang Xiaotian, Zheng Yingchen", 24, head_synopsis,yr_genres, "2019");
+        Drama go = new Drama("Go Ahead",EmojiParser.parseToUnicode("China :cn:"), "Seven Tan, Song Wei Long, Steven Zhang", 46,  go_synopsis, y_genres,"2020");
+
+
+        //cdrama
+        allDrama.add(untamed);
+        allDrama.add(legend);
+        allDrama.add(detective);
+        allDrama.add(roommate);
+        allDrama.add(squid);
+        allDrama.add(tiger);
+        allDrama.add(head);
+        allDrama.add(go);
+
+
     }
 
     public ArrayList<String> getDramaTitle(String country, String year, String genre) {
