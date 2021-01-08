@@ -246,7 +246,7 @@ public class RecoDramaBot extends TelegramLongPollingBot {
 
         String url = "jdbc:mysql://127.0.0.1:3306/dramadb";
         String username = "root";
-        String password = "IL2pBB&D";
+        String password = "A&bcdefg";
         Connection connection = DriverManager.getConnection(url, username, password);
         Statement statement = connection.createStatement();
         String sql = "SELECT * FROM drama WHERE country = " + "\"" + countryChosen + "\"" + " and genre = " + "\"" + genreChosen + "\"" + " and year = "+ "\"" +
@@ -270,7 +270,7 @@ public class RecoDramaBot extends TelegramLongPollingBot {
 
             replyKeyboardMarkup = createOptions(replyKeyboardMarkup,
                     keyboardRowList, options);
-            //replyKeyboardMarkup.setOneTimeKeyboard(true);
+            replyKeyboardMarkup.setOneTimeKeyboard(true);
             request.setReplyMarkup(replyKeyboardMarkup);
         }
         try {
@@ -286,7 +286,7 @@ public class RecoDramaBot extends TelegramLongPollingBot {
         try {
             String url = "jdbc:mysql://127.0.0.1:3306/dramadb";
             String username = "root";
-            String password = "IL2pBB&D";
+            String password = "A&bcdefg";
             Connection connection = DriverManager.getConnection(url, username, password);
             Statement statement = connection.createStatement();
             String sql = "select * from drama where title = " + "\"" + dramaChosenTitle + "\"";

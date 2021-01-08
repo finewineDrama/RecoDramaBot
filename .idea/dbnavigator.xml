@@ -23,11 +23,7 @@
     <autoscroll-to-editor value="false" />
     <autoscroll-from-editor value="true" />
     <show-object-properties value="true" />
-    <loaded-nodes>
-      <connection connection-id="dd348d1d-0409-471f-bc53-750c1e358399">
-        <schema name="dramadb" object-types="table, index, dataset trigger, constraint, view, column" />
-      </connection>
-    </loaded-nodes>
+    <loaded-nodes />
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="dd348d1d-0409-471f-bc53-750c1e358399">
@@ -35,9 +31,7 @@
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files>
-      <object connection-id="dd348d1d-0409-471f-bc53-750c1e358399" object-ref="schemas/dramadb/tables/drama" />
-    </open-files>
+    <open-files />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="dd348d1d-0409-471f-bc53-750c1e358399" />
