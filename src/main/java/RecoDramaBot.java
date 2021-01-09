@@ -88,44 +88,6 @@ public class RecoDramaBot extends TelegramLongPollingBot {
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
                 }
-                /*
-                SendPhoto dramaPoster = new SendPhoto();
-                dramaPoster.setChatId(chatId.toString());
-                //dramaPoster.setPhoto("https://images.unsplash.com/photo-1590272456521-1bbe160a18ce?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MTF8fHxlbnwwfHx8&w=1000&q=80");
-                //dramaPoster.setPhoto(getPhoto("https://images.unsplash.com/photo-1590272456521-1bbe160a18ce?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MTF8fHxlbnwwfHx8&w=1000&q=80"));
-                try {
-                    execute(dramaPoster);
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
-                }
-
-                URL url = null;
-                try {
-                    url = new URL("https://www.kindpng.com/picc/m/276-2764257_instagram-icon-instagram-logo-small-size-hd-png.png");
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                }
-
-                URI uri = null;
-                try {
-                    uri = url.toURI();
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
-                }
-                File file = new File(uri.toString());
-                SendPhoto dramaPoster = new SendPhoto();
-                InputFile photo = new InputFile(file);
-                dramaPoster.setPhoto(photo);
-                dramaPoster.setChatId(chatId.toString());
-                try {
-                    execute(dramaPoster);
-                    System.out.println("printed");
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
-                    System.out.println("end");
-                }
-
-                 */
 
             } else {
                 processRequest(input, chatId);
@@ -302,7 +264,7 @@ public class RecoDramaBot extends TelegramLongPollingBot {
                 message.setText(rs.getString("year"));
             } else if (data.equals("see_genre")) {
                 message.setText(rs.getString("genre"));
-            } else { //back
+            } /*else { //back
                 message.setText("These are the generated dramas.");
                 message.setParseMode(ParseMode.MARKDOWN);
 
@@ -317,6 +279,7 @@ public class RecoDramaBot extends TelegramLongPollingBot {
                 message.setReplyMarkup(replyKeyboardMarkup);
 
             }
+            */
             message.setParseMode(ParseMode.MARKDOWN);
             try {
                 execute(message);
@@ -370,11 +333,13 @@ public class RecoDramaBot extends TelegramLongPollingBot {
         genre.setCallbackData("see_genre");
         rowInline2.add(genre);
 
+        /*
         //back
         InlineKeyboardButton back = new InlineKeyboardButton();
         back.setText("Back");
         back.setCallbackData("see_previous");
         rowInline2.add(back);
+         */
 
         // Set the keyboard to the markup
         rowsInline.add(rowInline1);
@@ -390,14 +355,4 @@ public class RecoDramaBot extends TelegramLongPollingBot {
         }
     }
 
-    /*
-    public InputFile getPhoto(String url) {
-        // Create a URI from url
-        URI uri = create(url);
-        File file = new File(uri);
-        InputFile photo = new InputFile(file);
-        return photo;
-    }
-
-     */
 }
